@@ -6,22 +6,29 @@
 //  Copyright © 2019 weathernews. All rights reserved.
 //
 
-import XCTest
+import FBSnapshotTestCase
 @testable import HelloSnapshot
 
-class HelloSnapshotTests: XCTestCase {
+class HelloSnapshotTests: FBSnapshotTestCase {
 
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        super.setUp()
+        folderName = "StartUp"
+        fileNameOptions = [ .device, .OS, .screenSize, .screenScale ]
+        //recordMode = true
     }
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testStartupScreen() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let vc = storyboard.instantiateInitialViewController() else { fatalError() }
+        vc.loadViewIfNeeded()
+        vc.view.layoutIfNeeded()
+        FBSnapshotVerifyView(vc.view)
+
     }
 
     func testPerformanceExample() {
