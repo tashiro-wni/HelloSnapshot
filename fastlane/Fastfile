@@ -1,0 +1,40 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  lane :snapshot_test do |options|
+    Dir.chdir("#{ENV['PWD']}") do
+
+      workspace = 'HelloSnapshot.xcworkspace'
+      scheme = 'HelloSnapshot'
+      system("xcodebuild build-for-testing -workspace #{workspace} -scheme #{scheme} -destination 'generic/platform=iOS Simulator' ENABLE_TESTABILITY=YES")
+
+      only_testing = options[:target_tests] != nil ? "HelloSnapshotTests/#{options[:target_tests]}" : "HelloSnapshotTests"
+
+      snapshot_test(workspace, scheme, 'iPhone XS MAX', '12.2', only_testing)
+#      snapshot_test(workspace, scheme, 'iPhone X', '11.4', only_testing)
+#      snapshot_test(workspace, scheme, 'iPhone SE', '12.4', only_testing)
+#      snapshot_test(workspace, scheme, 'iPhone SE', '11.4', only_testing)
+#      snapshot_test(workspace, scheme, 'iPhone SE', '10.3.1', only_testing)
+    end
+  end
+
+  def snapshot_test(workspace, scheme, device, os_version, only_testing)
+    system("xcodebuild test-without-building -workspace #{workspace} -scheme #{scheme} RECORD_MODE_ENV=true -destination 'name=#{device},OS=#{os_version}' -only-testing:#{only_testing} FB_REFERENCE_IMAGE_DIR='./snapshotTests/ReferenceImages'")
+  end
+
+end
