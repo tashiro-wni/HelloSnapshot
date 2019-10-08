@@ -7,7 +7,7 @@ fastlane/report.xml
 
 # CocoaPods
 Pods
-Podfile.lock
+#Podfile.lock
 
 # Xcode
 xcuserdata/
